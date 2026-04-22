@@ -69,6 +69,14 @@
                PIN_EPD_RST,
                PIN_EPD_BUSY));
 #endif
+#ifdef DISP_3C_E420
+  GxEPD2_3C<GxEPD2_420c_GDEY042Z98,
+            GxEPD2_420c_GDEY042Z98::HEIGHT / 2> display(
+    GxEPD2_420c_GDEY042Z98(PIN_EPD_CS,
+                           PIN_EPD_DC,
+                           PIN_EPD_RST,
+                           PIN_EPD_BUSY));
+#endif
 
 #ifndef ACCENT_COLOR
   #define ACCENT_COLOR GxEPD_BLACK
@@ -1732,28 +1740,33 @@ void drawStatusBar(const String &statusStr, const String &refreshTimeStr,
  * If error message line 2 (errMsgLn2) is empty, line 1 will be automatically
  * wrapped.
  */
-void drawError(const uint8_t *bitmap_196x196,
+void drawError(const uint8_t *bitmap,
                const String &errMsgLn1, const String &errMsgLn2)
 {
+#ifdef DISP_3C_E420
+  const int iconSize = 96;
+#else
+  const int iconSize = 196;
+#endif
   display.setFont(&FONT_26pt8b);
   if (!errMsgLn2.isEmpty())
   {
     drawString(DISP_WIDTH / 2,
-               DISP_HEIGHT / 2 + 196 / 2 + 21,
+               DISP_HEIGHT / 2 + iconSize / 2 + 21,
                errMsgLn1, CENTER);
     drawString(DISP_WIDTH / 2,
-               DISP_HEIGHT / 2 + 196 / 2 + 21 + 55,
+               DISP_HEIGHT / 2 + iconSize / 2 + 21 + 55,
                errMsgLn2, CENTER);
   }
   else
   {
     drawMultiLnString(DISP_WIDTH / 2,
-                      DISP_HEIGHT / 2 + 196 / 2 + 21,
+                      DISP_HEIGHT / 2 + iconSize / 2 + 21,
                       errMsgLn1, CENTER, DISP_WIDTH - 200, 2, 55);
   }
-  display.drawInvertedBitmap(DISP_WIDTH / 2 - 196 / 2,
-                             DISP_HEIGHT / 2 - 196 / 2 - 21,
-                             bitmap_196x196, 196, 196, ACCENT_COLOR);
+  display.drawInvertedBitmap(DISP_WIDTH / 2 - iconSize / 2,
+                             DISP_HEIGHT / 2 - iconSize / 2 - 21,
+                             bitmap, iconSize, iconSize, ACCENT_COLOR);
   return;
 } // end drawError
 
