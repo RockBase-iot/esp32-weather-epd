@@ -1,9 +1,0 @@
-{
-	"folders": [
-		{
-			"name": "platformio",
-			"path": "../../../github/esp32-weather-epd/platformio"
-		}
-	],
-	"settings": {}
-}

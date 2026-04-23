@@ -639,6 +639,16 @@ const uint8_t *getHourlyForecastBitmap32(const owm_hourly_t &hourly,
 /* Takes the daily weather forecast (from OpenWeatherMap API response) and
  * returns a pointer to the icon's 64x64 bitmap.
  */
+const uint8_t *getDailyForecastBitmap32(const owm_daily_t &daily)
+{
+  const int id = daily.weather.id;
+  const bool day = true;
+  const bool moon = false;
+  const bool cloudy = isCloudy(daily.clouds);
+  const bool windy = isWindy(daily.wind_speed, daily.wind_gust);
+  return getConditionsBitmap<32>(id, day, moon, cloudy, windy);
+} // end getDailyForecastBitmap32
+
 const uint8_t *getDailyForecastBitmap64(const owm_daily_t &daily)
 {
   const int id = daily.weather.id;
@@ -656,6 +666,18 @@ const uint8_t *getDailyForecastBitmap64(const owm_daily_t &daily)
  *
  * The daily weather forcast of today is needed for moonrise and moonset times.
  */
+const uint8_t *getCurrentConditionsBitmap96(const owm_current_t &current,
+                                            const owm_daily_t   &today)
+{
+  const int id = current.weather.id;
+  const bool day = isDay(current.weather.icon);
+  const bool moon = isMoonInSky(current.dt, today.moonrise, today.moonset,
+                                today.moon_phase);
+  const bool cloudy = isCloudy(current.clouds);
+  const bool windy = isWindy(current.wind_speed, current.wind_gust);
+  return getConditionsBitmap<96>(id, day, moon, cloudy, windy);
+} // end getCurrentConditionsBitmap96
+
 const uint8_t *getCurrentConditionsBitmap196(const owm_current_t &current,
                                              const owm_daily_t   &today)
 {
