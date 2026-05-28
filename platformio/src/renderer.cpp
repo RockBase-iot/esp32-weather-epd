@@ -566,7 +566,11 @@ void drawCurrentAirQuality(const owm_resp_air_pollution_t &owm_air_pollution)
     dataStr = String(aqi);
   }
   drawString(WI_LOFF + (WI_COL * PosX), WI_Y0 + WI_DDY + WI_DY * PosY, dataStr, LEFT);
+#ifdef DISP_3C_E420
   display.setFont(&FONT_5pt8b);
+#else
+  display.setFont(&FONT_7pt8b);
+#endif
   dataStr = String(aqi_desc(AQI_SCALE, aqi));
   int max_w = (WI_COL + (PosX * WI_COL) - sp) - (display.getCursorX() + sp);
   if (getStringWidth(dataStr) <= max_w)
