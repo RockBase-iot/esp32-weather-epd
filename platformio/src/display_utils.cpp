@@ -36,6 +36,28 @@
  */
 uint32_t readBatteryVoltage()
 {
+#if defined(NM_EPD_280)
+  // NM EPD 280 (ESP32-S3): enable the battery ADC divider circuit, take 16
+  // averaged samples via analogReadMilliVolts(), then shut it down again.
+  pinMode(PIN_BAT_ADC_EN, OUTPUT);
+  digitalWrite(PIN_BAT_ADC_EN, HIGH);
+  delay(20); // allow RC network / analog switch to settle
+
+  analogSetAttenuation(ADC_11db); // 0–3300 mV input range
+  delay(5);
+
+  uint32_t sum = 0;
+  for (int i = 0; i < 16; i++) {
+    sum += (uint32_t)analogReadMilliVolts(PIN_BAT_ADC);
+    delay(2);
+  }
+  uint32_t adcMv = sum / 16;
+  // Resistor divider ratio = 2 (same as NM-Display-420 BATT_ADC_DIV)
+  uint32_t batteryVoltage = adcMv * 2;
+
+  digitalWrite(PIN_BAT_ADC_EN, LOW);
+  return batteryVoltage;
+#else
   esp_adc_cal_characteristics_t adc_chars;
   // __attribute__((unused)) disables compiler warnings about this variable
   // being unused (Clang, GCC) which is the case when DEBUG_LEVEL == 0.
@@ -71,6 +93,7 @@ uint32_t readBatteryVoltage()
   // multiplied by 2.
   batteryVoltage *= 2;
   return batteryVoltage;
+#endif
 } // end readBatteryVoltage
 
 /* Returns battery percentage, rounded to the nearest integer.

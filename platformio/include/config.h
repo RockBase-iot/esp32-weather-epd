@@ -321,6 +321,9 @@
 
 // Set the below constants in "config.cpp"
 extern const uint8_t PIN_BAT_ADC;
+#if defined(NM_EPD_280)
+extern const uint8_t PIN_BAT_ADC_EN; // Battery ADC enable pin (active HIGH)
+#endif
 extern const uint8_t PIN_EPD_BUSY;
 extern const uint8_t PIN_EPD_CS;
 extern const uint8_t PIN_EPD_RST;

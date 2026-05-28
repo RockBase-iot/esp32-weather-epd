@@ -26,13 +26,15 @@
 //       board's pinout to ensure you avoid using a pin with this shared 
 //       functionality.
 
-#if defined(NM_DISPLAY_420)
-// NM Display 420 (LilyGo T-Display-S3) pinout
-// ADC pin used to measure battery voltage
-const uint8_t PIN_BAT_ADC  = A0;
+#if defined(NM_EPD_280)
+// NM EPD 280 (LilyGo T-Display-S3) pinout
+// ADC enable pin: pull HIGH to power the battery voltage divider circuit
+const uint8_t PIN_BAT_ADC_EN = 43; // GPIO43, active HIGH
+// ADC pin used to measure battery voltage (via resistor divider, ratio 1:2)
+const uint8_t PIN_BAT_ADC  = 3;   // GPIO3
 // Pins for E-Paper Driver Board
 const uint8_t PIN_EPD_BUSY = 6;
-const uint8_t PIN_EPD_CS   = 3;
+const uint8_t PIN_EPD_CS   = 46;
 const uint8_t PIN_EPD_RST  = 5;
 const uint8_t PIN_EPD_DC   = 4;
 const uint8_t PIN_EPD_SCK  = 2;
