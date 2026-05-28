@@ -36,8 +36,8 @@
  */
 uint32_t readBatteryVoltage()
 {
-#if defined(NM_EPD_280)
-  // NM EPD 280 (ESP32-S3): enable the battery ADC divider circuit, take 16
+#if defined(NM_EPD_420)
+  // NM-EPD-420 (ESP32-S3): enable the battery ADC divider circuit, take 16
   // averaged samples via analogReadMilliVolts(), then shut it down again.
   pinMode(PIN_BAT_ADC_EN, OUTPUT);
   digitalWrite(PIN_BAT_ADC_EN, HIGH);
