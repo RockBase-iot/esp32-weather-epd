@@ -52,6 +52,13 @@
   extern GxEPD2_BW<GxEPD2_750,
                    GxEPD2_750::HEIGHT> display;
 #endif
+#ifdef DISP_3C_E420
+  #define DISP_WIDTH  400
+  #define DISP_HEIGHT 300
+  #include <GxEPD2_3C.h>
+  extern GxEPD2_3C<GxEPD2_420c_GDEY042Z98,
+                   GxEPD2_420c_GDEY042Z98::HEIGHT / 2> display;
+#endif
 
 typedef enum alignment
 {
@@ -82,7 +89,7 @@ void drawOutlookGraph(const owm_hourly_t *hourly, const owm_daily_t *daily,
                       tm timeInfo);
 void drawStatusBar(const String &statusStr, const String &refreshTimeStr,
                    int rssi, uint32_t batVoltage);
-void drawError(const uint8_t *bitmap_196x196,
+void drawError(const uint8_t *bitmap,
                const String &errMsgLn1, const String &errMsgLn2="");
 void drawCurrentSunrise(const owm_current_t &current);
 void drawCurrentSunset(const owm_current_t &current);
