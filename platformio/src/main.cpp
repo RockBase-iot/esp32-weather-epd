@@ -28,6 +28,9 @@
 #include "client_utils.h"
 #include "config.h"
 #include "display_utils.h"
+#ifdef USE_OPENWEATHER_MOCK_DATA
+  #include "mock_weather.h"
+#endif
 #ifdef DISP_3C_E420
   #include "icons/icons_96x96.h"
 #else
@@ -270,6 +273,10 @@ void setup()
   }
 
   // MAKE API REQUESTS
+#ifdef USE_OPENWEATHER_MOCK_DATA
+  loadMockOpenWeatherData(owm_onecall, owm_air_pollution);
+  statusStr = "Using mock OpenWeather data";
+#else
 #ifdef USE_HTTP
   WiFiClient client;
 #elif defined(USE_HTTPS_NO_CERT_VERIF)
@@ -316,6 +323,7 @@ void setup()
     beginDeepSleep(startTime, &timeInfo);
   }
   killWiFi(); // WiFi no longer needed
+#endif
 
   // GET INDOOR TEMPERATURE AND HUMIDITY, start BMEx80...
   pinMode(PIN_BME_PWR, OUTPUT);

@@ -462,10 +462,19 @@ void drawCurrentUVI(const owm_current_t &current)
 #else
   display.setFont(&FONT_7pt8b);
 #endif
-  drawString(WI_LOFF + (WI_COL * PosX), WI_Y0 + WI_LDY + WI_DY * PosY, TXT_UV_INDEX, LEFT);
+  const int labelX = WI_LOFF + (WI_COL * PosX);
+#ifdef DISP_3C_E420
+  drawString(labelX, WI_Y0 + WI_LDY + WI_DY * PosY, "UV", LEFT);
+#else
+  drawString(labelX, WI_Y0 + WI_LDY + WI_DY * PosY, TXT_UV_INDEX, LEFT);
+#endif
 
   // spacing between end of index value and start of descriptor text
-  const int sp = 8;
+  #ifdef DISP_3C_E420
+    const int sp = 4;
+  #else
+    const int sp = 8;
+  #endif
 
   // uv index
 #ifdef DISP_3C_E420
@@ -476,33 +485,42 @@ void drawCurrentUVI(const owm_current_t &current)
   unsigned int uvi = static_cast<unsigned int>(
                                 std::max(std::round(current.uvi), 0.0f));
   dataStr = String(uvi);
-  drawString(WI_LOFF + (WI_COL * PosX), WI_Y0 + WI_DDY + WI_DY * PosY, dataStr, LEFT, ACCENT_COLOR);
+  drawString(labelX, WI_Y0 + WI_DDY + WI_DY * PosY, dataStr, LEFT, ACCENT_COLOR);
 #ifdef DISP_3C_E420
   display.setFont(&FONT_5pt8b);
 #else
   display.setFont(&FONT_7pt8b);
 #endif
   dataStr = String(getUVIdesc(uvi));
+#ifdef DISP_3C_E420
+  const int max_w = (WI_COL + (PosX * WI_COL) - sp) - (display.getCursorX() + sp) - 4;
+  const int descY = WI_Y0 + WI_DDY + WI_DY * PosY + 4;
+#else
   int max_w = (WI_COL + (PosX * WI_COL) - sp) - (display.getCursorX() + sp);
+  const int descY = WI_Y0 + WI_DDY + WI_DY * PosY;
+#endif
   if (getStringWidth(dataStr) <= max_w)
   { // Fits on a single line, draw along bottom
-    drawString(display.getCursorX() + sp, WI_Y0 + WI_DDY + WI_DY * PosY,
-               dataStr, LEFT, ACCENT_COLOR);
+    drawString(display.getCursorX() + sp, descY, dataStr, LEFT, ACCENT_COLOR);
   }
   else
   { // use smaller font
     display.setFont(&FONT_5pt8b);
     if (getStringWidth(dataStr) <= max_w)
     { // Fits on a single line with smaller font, draw along bottom
-      drawString(display.getCursorX() + sp,
-                 WI_Y0 + WI_DDY + WI_DY * PosY,
-                 dataStr, LEFT, ACCENT_COLOR);
+      drawString(display.getCursorX() + sp, descY, dataStr, LEFT,
+                 ACCENT_COLOR);
     }
     else
     { // Does not fit on a single line, draw higher to allow room for 2nd line
       drawMultiLnString(display.getCursorX() + sp,
+#ifdef DISP_3C_E420
+                        WI_Y0 + WI_DDY + WI_DY * PosY - 8,
+                        dataStr, LEFT, max_w, 2, 9, ACCENT_COLOR);
+#else
                         WI_Y0 + WI_DDY + WI_DY * PosY - 10,
                         dataStr, LEFT, max_w, 2, 10, ACCENT_COLOR);
+#endif
     }
   }
   return;
@@ -533,6 +551,10 @@ void drawCurrentAirQuality(const owm_resp_air_pollution_t &owm_air_pollution)
   display.setFont(&FONT_7pt8b);
 #endif
 
+  const int labelX = WI_LOFF + (WI_COL * PosX);
+#ifdef DISP_3C_E420
+  drawString(labelX, WI_Y0 + WI_LDY + WI_DY * PosY, "AQI", LEFT);
+#else
   const char *air_quality_index_label;
   if (aqi_desc_type(AQI_SCALE) == AIR_QUALITY_DESC)
   {
@@ -542,10 +564,15 @@ void drawCurrentAirQuality(const owm_resp_air_pollution_t &owm_air_pollution)
   {
     air_quality_index_label = TXT_AIR_POLLUTION;
   }
-  drawString(WI_LOFF + (WI_COL * PosX), WI_Y0 + WI_LDY + WI_DY * PosY, air_quality_index_label, LEFT);
+  drawString(labelX, WI_Y0 + WI_LDY + WI_DY * PosY, air_quality_index_label, LEFT);
+#endif
 
   // spacing between end of index value and start of descriptor text
-  const int sp = 8;
+  #ifdef DISP_3C_E420
+    const int sp = 4;
+  #else
+    const int sp = 8;
+  #endif
 
   // air quality index
 #ifdef DISP_3C_E420
@@ -566,14 +593,18 @@ void drawCurrentAirQuality(const owm_resp_air_pollution_t &owm_air_pollution)
   {
     dataStr = String(aqi);
   }
-  drawString(WI_LOFF + (WI_COL * PosX), WI_Y0 + WI_DDY + WI_DY * PosY, dataStr, LEFT, ACCENT_COLOR);
+  drawString(labelX, WI_Y0 + WI_DDY + WI_DY * PosY, dataStr, LEFT, ACCENT_COLOR);
 #ifdef DISP_3C_E420
   display.setFont(&FONT_5pt8b);
 #else
   display.setFont(&FONT_7pt8b);
 #endif
   dataStr = String(aqi_desc(AQI_SCALE, aqi));
+#ifdef DISP_3C_E420
+  const int max_w = (WI_COL + (PosX * WI_COL) - sp) - (display.getCursorX() + sp) - 4;
+#else
   int max_w = (WI_COL + (PosX * WI_COL) - sp) - (display.getCursorX() + sp);
+#endif
   if (getStringWidth(dataStr) <= max_w)
   { // Fits on a single line, draw along bottom
     drawString(display.getCursorX() + sp, WI_Y0 + WI_DDY + WI_DY * PosY,
@@ -591,8 +622,13 @@ void drawCurrentAirQuality(const owm_resp_air_pollution_t &owm_air_pollution)
     else
     { // Does not fit on a single line, draw higher to allow room for 2nd line
       drawMultiLnString(display.getCursorX() + sp,
+#ifdef DISP_3C_E420
+                        WI_Y0 + WI_DDY + WI_DY * PosY - 8,
+                        dataStr, LEFT, max_w, 2, 9, ACCENT_COLOR);
+#else
                         WI_Y0 + WI_DDY + WI_DY * PosY - 10,
                         dataStr, LEFT, max_w, 2, 10, ACCENT_COLOR);
+#endif
     }
   }
 
@@ -1308,7 +1344,7 @@ void drawForecast(const owm_daily_t *daily, tm timeInfo)
   for (int i = 0; i < 5; ++i)
   {
 #ifdef DISP_3C_E420
-    int x = 178 + (i * 44);
+    int x = 180 + (i * 43);
 #elif !defined(DISP_BW_V1)
     int x = 398 + (i * 82);
 #elif defined(DISP_BW_V1)
@@ -1316,7 +1352,7 @@ void drawForecast(const owm_daily_t *daily, tm timeInfo)
 #endif
     // icons
 #ifdef DISP_3C_E420
-    display.drawInvertedBitmap(x, 49 + 69 / 4 - 32 / 2 - 6 / 2,
+    display.drawInvertedBitmap(x, 46 + 69 / 4 - 32 / 2 - 6 / 2,
                                getDailyForecastBitmap32(daily[i]),
                                32, 32, GxEPD_BLACK);
 #else
@@ -1333,7 +1369,7 @@ void drawForecast(const owm_daily_t *daily, tm timeInfo)
     char dayBuffer[8] = {};
     _strftime(dayBuffer, sizeof(dayBuffer), "%a", &timeInfo); // abbrv'd day
 #ifdef DISP_3C_E420
-    drawString(x + 15, 49 + 69 / 4 - 32 / 2 - 26 / 2 - 6 / 2 + 16 / 2, dayBuffer, CENTER);
+    drawString(x + 15, 46 + 69 / 4 - 32 / 2 - 24 / 2 - 6 / 2 + 16 / 2, dayBuffer, CENTER);
 #else
     drawString(x + 31 - 2, 98 + 69 / 2 - 32 - 26 - 6 + 16, dayBuffer, CENTER);
 #endif
@@ -1346,7 +1382,7 @@ void drawForecast(const owm_daily_t *daily, tm timeInfo)
     display.setFont(&FONT_8pt8b);
 #endif
 #ifdef DISP_3C_E420
-    drawString(x + 15, 49 + 69 / 4 + 38 / 2 - 6 / 2 + 12 / 2, "|", CENTER);
+    drawString(x + 15, 46 + 69 / 4 + 38 / 2 - 6 / 2 + 12 / 2, "|", CENTER);
 #else
     drawString(x + 31, 98 + 69 / 2 + 38 - 6 + 12, "|", CENTER);
 #endif
@@ -1372,8 +1408,8 @@ void drawForecast(const owm_daily_t *daily, tm timeInfo)
 #endif
 #ifdef TEMP_ORDER_HL
   #ifdef DISP_3C_E420
-    drawString(x + 15 - 3, 49 + 69 / 4 + 38 / 2 - 6 / 2 + 12 / 2, hiStr, RIGHT);
-    drawString(x + 15 + 3, 49 + 69 / 4 + 38 / 2 - 6 / 2 + 12 / 2, loStr, LEFT, ACCENT_COLOR);
+    drawString(x + 15 - 2, 46 + 69 / 4 + 38 / 2 - 6 / 2 + 12 / 2, hiStr, RIGHT);
+    drawString(x + 15 + 2, 46 + 69 / 4 + 38 / 2 - 6 / 2 + 12 / 2, loStr, LEFT, ACCENT_COLOR);
   #else
     drawString(x + 31 - 4, 98 + 69 / 2 + 38 - 6 + 12, hiStr, RIGHT);
     drawString(x + 31 + 5, 98 + 69 / 2 + 38 - 6 + 12, loStr, LEFT);
@@ -1381,8 +1417,8 @@ void drawForecast(const owm_daily_t *daily, tm timeInfo)
 #endif
 #ifdef TEMP_ORDER_LH
   #ifdef DISP_3C_E420
-    drawString(x + 15 - 3, 49 + 69 / 4 + 38 / 2 - 6 / 2 + 12 / 2, loStr, RIGHT);
-    drawString(x + 15 + 3, 49 + 69 / 4 + 38 / 2 - 6 / 2 + 12 / 2, hiStr, LEFT, ACCENT_COLOR);
+    drawString(x + 15 - 2, 46 + 69 / 4 + 38 / 2 - 6 / 2 + 12 / 2, loStr, RIGHT);
+    drawString(x + 15 + 2, 46 + 69 / 4 + 38 / 2 - 6 / 2 + 12 / 2, hiStr, LEFT, ACCENT_COLOR);
   #else
     drawString(x + 31 - 4, 98 + 69 / 2 + 38 - 6 + 12, loStr, RIGHT);
     drawString(x + 31 + 5, 98 + 69 / 2 + 38 - 6 + 12, hiStr, LEFT);
@@ -1423,8 +1459,7 @@ void drawForecast(const owm_daily_t *daily, tm timeInfo)
 #endif
         display.setFont(&FONT_6pt8b);
 #ifdef DISP_3C_E420
-        drawString(x + 15, 49 + 69 / 4 + 38 / 2 - 6 / 2 + 26 / 2,
-                   dataStr + unitStr, CENTER);
+        drawString(x + 15, 103, dataStr + unitStr, CENTER);
 #else
         drawString(x + 31, 98 + 69 / 2 + 38 - 6 + 26,
                    dataStr + unitStr, CENTER);
@@ -1898,8 +1933,14 @@ void drawOutlookGraph(const owm_hourly_t *hourly, const owm_daily_t *daily,
         }
         const uint8_t *bitmap = getHourlyForecastBitmap32(hourly[i],
                                                           daily[day_idx]);
+#ifdef DISP_3C_E420
+        y_b = std::min(y_b - 6, yPos1 - 52);
         display.drawInvertedBitmap(xTick - 16, y_b - 32,
                                    bitmap, 32, 32, GxEPD_BLACK);
+#else
+        display.drawInvertedBitmap(xTick - 16, y_b - 32,
+                                   bitmap, 32, 32, GxEPD_BLACK);
+#endif
       }
 #endif
     }
